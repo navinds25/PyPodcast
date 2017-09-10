@@ -23,7 +23,7 @@ def new_podcast():
 
 @route('/add_podcast', method='POST')
 def add_podcast():
-    podcast_name = request.forms.get('podcast_name')
+    podcast_name = request.forms.get('podcast_name').replace(' ','_')
     podcast_url = request.forms.get('podcast_url')
     PypodModel().insert_podcast_list(pn=podcast_name, pu=podcast_url)
     return "Added podcast : {} with url: {} \n".format(podcast_name, podcast_url)
@@ -45,4 +45,4 @@ def get_episode(podcast_name, episode_name):
     return "Downloaded file as {}".format(episode_name)
 
 if __name__ == '__main__':
-    run(host='127.0.0.1', port=8080, debug=True)
+    run(host='127.0.0.1', port=8080)

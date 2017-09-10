@@ -45,9 +45,9 @@ class PypodModel(object):
         return results
 
     def get_podcast(self, pod_name):
-        result_exec = self.podcast_list.select().execute(podcast_name=pod_name)
-        results = result_exec.fetchall()
-        name, pod_url = results[0]
+        results_exec = select([self.podcast_list]).where(self.podcast_list.c.podcast_name == pod_name).execute()
+        results = results_exec.fetchone()
+        name, pod_url = results
         metadata = feedparser.parse(pod_url)
         episodes = {}
         for data in metadata['entries']:
@@ -56,17 +56,15 @@ class PypodModel(object):
                 if d['type'] == 'audio/mpeg':
                     value = d['href'].rstrip('\r\n')
                     episodes[key] = value
-                    print('{}={}\n'.format(key, value))
         return episodes
 
     @staticmethod
     def write_media(url, episode_name):
         r = requests.get(url.strip(), stream=True)
-        with open('{}'.format(episode_name), 'wb') as f:
+        with open('{}.mp3'.format(episode_name), 'wb') as f:
             for chunk in r.iter_content(chunk_size=512**2):
                 f.write(chunk)
 
 
 if __name__ == '__main__':
     PypodModel().create_tables()
-    PypodModel().get_podcast('pythonbytes')
