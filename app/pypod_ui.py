@@ -7,7 +7,7 @@ from pypod_model import PypodModel
 @route('/')
 def main_page():
     from_db = PypodModel().get_podcast_list()
-    output = template('main_page', rows=from_db)
+    output = template('main_page.html', rows=from_db)
     return output
 
 @route('/new_podcast')
